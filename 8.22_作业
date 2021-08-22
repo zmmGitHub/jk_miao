@@ -1,0 +1,74 @@
+//根据前序和中序遍历写出二叉树
+//先根据前序遍历找出根结点存在哈希表中便于查询
+//再用查出来的根结点。在中序序列中找到根结点
+//根据中序遍历特点得出结论：中序列表中。根结点左边是左子树结点，根结点右边是右子树结点。
+//设置中序序列中根结点为k。那么前序序列中根结点往后的k+1个值都是左子树的排列顺序
+//深度递归调用每个结点。得到最后的二叉树
+时间复杂度：O(n)-for循环。
+空间复杂度呀：n；哈希表占用的的空间
+class Solution {
+public:
+
+    unordered_map<int,int> pos;
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int n = preorder.size();
+        for(int i = 0; i < n; i++)
+            pos[inorder[i]] = i; //记录中序遍历的根节点位置
+        return dfs(preorder,inorder,0,n-1,0,n-1);        
+    }
+    //pl,pr对应一棵子树的前序遍历区间的左右端点
+    //il,ir对应一棵子树的中序遍历区间的左右端点
+    TreeNode* dfs(vector<int>&pre,vector<int>&in,int pl,int pr,int il,int ir)
+    {
+        if(pl > pr || il > ir)  return NULL; //子树为空
+        int k = pos[pre[pl]] - il; // pos[pre[pl]]是中序遍历中根节点位置，k是子树前序和中序遍历的长度
+        TreeNode* root = new TreeNode(pre[pl]);
+        root->left = dfs(pre,in,pl+1,pl+k,il,il+k-1);  //左子树前序遍历，左子树中序遍历
+        root->right = dfs(pre,in,pl+k+1,pr,il+k+1,ir); //右子树前序遍历，右子树中序遍历
+        return root;
+    }
+};
+
+//二叉树的最大深度
+//遍历左右子树。递归调用。返回值加一
+时间复杂度：O(logN) 递归
+空间复杂度：0 没有使用额外的空间
+class Solution {
+public:
+  int maxDepth(TreeNode* root){
+      if(root==nullptr) return 0;
+   int  depleft  =   maxDepth(root->left);
+   int depright =   maxDepth(root->right);
+      return max(depleft,depright)+1;
+  }
+};
+
+//二叉树的最小深度
+//理解递归的结束条件。叶子结点：指的左右孩子都为空的节点
+//遍历树。检验左右子树是否有为空
+//左子树为空遍历右子树。反之同理。若都存在都遍历执行。
+//不断递归每个结点。
+//返回最小值加一；
+时间复杂度：O(logN)
+空间复杂度：O(1)--存储result
+
+ int minDepth(TreeNode* root) {
+        return getDepth(root);
+    }
+    int getDepth(TreeNode* node)
+    {
+        if(node==NULL) return 0;
+        // int leftDepth =getDepth(node->left);
+        // int rightDepth =getDepth(node->right);
+
+        if(node->left==NULL&& node->right!=NULL){
+            return 1 + getDepth(node->right);
+        }
+         if(node->right==NULL&& node->left!=NULL){
+            return 1+getDepth(node->left);
+        }
+        int result = min(getDepth(node->left),getDepth(node->right))+1;
+        return result;
+    }
+};
+

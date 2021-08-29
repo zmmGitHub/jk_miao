@@ -1,0 +1,119 @@
+1.柠檬水找0；
+遍历数组所有元素。定义三个变量five，ten，twenty；值代表他们各自出现的次数
+若元素为5，five++;
+若元素为10，且five>0;则five--；ten++；否则return false；
+若元素为20；若five>0&&ten>0，five--,ten--;或five>=3，five-=3;
+遍历结束没有return false，则return true；
+时间复杂度：O(N) 执行速度慢
+空间复杂度：O(1)  定义了三个存储次数的int变量
+但是老师我看不出来这哪里是跟贪心有联系。
+class Solution {
+public:
+    bool lemonadeChange(vector<int>& bills) {
+        int five = 0;
+        int ten = 0;
+        int twenty = 0;
+        for(int i=0;i<bills.size();++i){
+            if(bills[i]==5){
+                 five++;
+            }
+            if(bills[i]==10)
+            {
+                if(five==0) return false;
+                else {five--;ten++;}
+            }
+            if(bills[i]==20)
+            {
+                twenty++;
+                if(ten>0&&five>0)
+                { 
+                    five--;
+                    ten--;
+                }
+                else if(five>=3) five-=3;
+                else return false;
+            }
+    }
+    return true;
+    }
+};
+
+p122
+2.买卖股票的最佳时机
+贪心算法：只要后一天比前一天多，就立马卖出去
+遍历数组。i与i+1,只要比后边一天的大。就立马卖出去，记录差额，然后返回总额数
+时间复杂度：O(N)
+空间复杂度呀：额外的ans空间。O(1)
+int ans=0;
+for(int i=0;i<prices.size();i++)
+{
+    if(prices[i]<prices[i+1])
+    {
+        ans += prices[i+1] - prices[i];
+    }
+}
+return ans;
+
+
+p200
+3.岛屿数量
+双重for循环遍历。如果某元素为1.那么此元素四周的元素继续判断是否有等于1；
+如果等于1，则置为零。深度递归其四周元素的四周元素，
+若某元素值为1，标志值+1；当其递归的相邻元素都为0时。进入下一层循环
+遍历结束后返回标志值的值
+时间复杂度：O(N^2)双重循环
+空间复杂度：O(1)
+class Solution{
+private:
+    void dfs(vector<vector<char>>& gird,int r,int c)
+    {
+     int r=grid.size();
+     int c=gird[0].size();
+     grid[r][c]='0';
+     if(r-1>=0&&gird[r-1][c]=='1) dfs(grid,r-1,c);
+     if(r+1<nr&&grid[r+1][c]=='1') dfs(grid,r+1,c);
+     if(c-1>0&&grid[r][c-1]=='1') dfs(grid,r,c-1);
+     if(c+1<cr&&grid[r][c+1]=='1') dfs(grid,r,c+1);
+    }
+public:
+    int numIslands(<vector<vector<char>>& grid)
+    {
+        int nr=grid.size();
+        if(!nr) return 0;
+        int nc=grid[0].size();
+
+        int num_islands=0;
+        for(int r=0;r<nr;r++)
+        {
+         for(int c=0;c<nc;c++)
+         {
+             if(grid[r][c]=='1'){
+                 num_islands++;
+                 dfs(grid,r,c)
+             }
+         }
+        }
+    }
+}
+
+
+p55
+4.跳跃游戏
+假设起跳点设置为k。那么能跳跃的最长距离是i+nums[i];
+对每个能跳跃的点 都尝试跳一次，把能跳到的最远距离不断更新
+时间复杂度：O(N)
+空间复杂度：O(1);k
+
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int k = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (i > k) return false;
+            k = max(k, i + nums[i]);
+        }
+        return true;
+    }
+};
+
+
